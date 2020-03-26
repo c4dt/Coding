@@ -23,7 +23,7 @@ $(GOPATH)/bin/golint:
 
 .PHONY: test_goveralls
 test_goveralls: $(GOPATH)/bin/goveralls
-	$< -covermode $(cover-mode) -race -show -service=travis-ci
+	$< -covermode $(cover-mode) -race -show -service=travis-ci -flags -test.parallel 1
 $(GOPATH)/bin/goveralls:
 	go get github.com/mattn/goveralls
 
