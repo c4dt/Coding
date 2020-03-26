@@ -1,10 +1,10 @@
-# prefix to find Coding root
-CODING ?= Coding
 # what to remove from golint
 lint-filter := cat
 ifdef EXCLUDE_LINT
 lint-filter := grep -vE '$(EXCLUDE_LINT)'
 endif
+# which cover mode to use
+cover-mode ?= atomic
 
 GOPATH := $(shell go env GOPATH)
 PATH := $(PATH):$(GOPATH)/bin
@@ -23,11 +23,8 @@ $(GOPATH)/bin/golint:
 	go get golang.org/x/lint/golint
 
 .PHONY: test_goveralls
-test_goveralls: profile.cov $(GOPATH)/bin/goveralls
-	goveralls -coverprofile=$< -service=travis-ci
-.INTERMEDIATE: profile.cov
-profile.cov:
-	$(CODING)/bin/coveralls.sh
+test_goveralls: $(GOPATH)/bin/goveralls
+	$< -covermode $(cover-mode) -race -show -service=travis-ci
 $(GOPATH)/bin/goveralls:
 	go get github.com/mattn/goveralls
 
