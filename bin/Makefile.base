@@ -7,7 +7,6 @@ endif
 cover-mode ?= atomic
 
 GOPATH := $(shell go env GOPATH)
-PATH := $(PATH):$(GOPATH)/bin
 
 .PHONY: test_fmt
 test_fmt:
@@ -18,7 +17,7 @@ test_fmt:
 .PHONY: test_lint
 test_lint: $(GOPATH)/bin/golint
 	@echo Checking linting of files
-	[ -z "`golint ./... | $(lint-filter)`" ]
+	[ -z "`$< ./... | $(lint-filter)`" ]
 $(GOPATH)/bin/golint:
 	go get golang.org/x/lint/golint
 
