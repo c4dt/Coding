@@ -5,6 +5,9 @@ lint-filter := cat
 ifdef EXCLUDE_LINT
 lint-filter := grep -vE '$(EXCLUDE_LINT)'
 endif
+# arguments for go test
+GO_TEST_FLAGS ?= -race -v
+GO_TEST_EXTRA_FLAGS ?= -failfast
 
 GOPATH := $(shell go env GOPATH)
 PATH := $(PATH):$(GOPATH)/bin
@@ -24,11 +27,8 @@ $(GOPATH)/bin/golint:
 	GO111MODULE=off go get golang.org/x/lint/golint
 
 .PHONY: test_goveralls
-test_goveralls: profile.cov $(GOPATH)/bin/goveralls
-	goveralls -coverprofile=$< -service=travis-ci
-.INTERMEDIATE: profile.cov
-profile.cov:
-	$(CODING)/bin/coveralls.sh
+test_goveralls: $(GOPATH)/bin/goveralls
+	$< -service=travis-ci $(GO_TEST_FLAGS) $(addprefix -flags ,$(GO_TEST_EXTRA_FLAGS))
 $(GOPATH)/bin/goveralls:
 	GO111MODULE=off go get github.com/mattn/goveralls
 
